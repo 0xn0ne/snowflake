@@ -110,6 +110,26 @@ func BenchmarkGenerater_NewSnowflakeID(b *testing.B) {
 	}
 }
 
+func TestSnowflakeID_CreateTime(t *testing.T) {
+	var now int64
+	var tmpTime int64
+
+	tmpTime = time.Now().UnixNano() / 1e6
+	for true {
+		now = time.Now().UnixNano() / 1e6
+		if now > tmpTime {
+			break
+		} else {
+			time.Sleep(time.Nanosecond)
+		}
+	}
+	// 对于 golang 的性能我还是很有信心的
+	snfkID := SnfkMng.NewSnowflakeID()
+	if snfkID.CreateTime() != now {
+		t.Error("Create time is different")
+	}
+}
+
 func BenchmarkSnowflakeManager_NewSnowflakeIDInt64(b *testing.B) {
 	var lSnfkID []int64
 	// 防干扰休眠

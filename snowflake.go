@@ -14,7 +14,6 @@ var (
 	// SnowflakeEpoch 默认设置为 twitter snowflake Epoch 即 Nov 04 2010 01:42:54 UTC
 	// 可以自定义此选项，推荐 SnowflakeEpoch 设置为项目上线的时间（单位：毫秒）
 	SnowflakeEpoch int64 = 1288834974657
-
 	// 储存节点号的位数
 	SnowflakeNodeBits uint8 = 10
 	// 储存序列号的位数
@@ -48,7 +47,7 @@ type SnowflakeID struct {
 	Sequence int64
 }
 
-// 新建可用于生成的新 Snowflake ID 的生成器
+// 新建可用于生成的新 Snowflake ID 的管理工具
 func NewSnowflakeManager(nodeNumber int64) (*SnowflakeManager, error) {
 	if nodeNumber < 0 || nodeNumber > SnowflakeNodeMax {
 		return nil, errors.New(fmt.Sprintf("SnowflakeManager number Mutst be between 0 and %d", SnowflakeNodeMax))
@@ -147,7 +146,7 @@ func (self *SnowflakeManager) NewSnowflakeIDString() string {
 
 // SnowflakeID 转化为 string 类型
 func (self *SnowflakeID) String() string {
-	return strconv.FormatInt(self.Int64(), 16)
+	return fmt.Sprintf("%016s", strconv.FormatInt(self.Int64(), 16))
 }
 
 // 将一个 string 类型变量解析为 SnowflakeID
@@ -157,4 +156,8 @@ func (self *SnowflakeManager) ParseString(it string) (*SnowflakeID, error) {
 		return nil, err
 	}
 	return self.ParseInt64(snowflakeInt64), nil
+}
+
+func (self *SnowflakeID) CreateTime() int64 {
+	return self.Overtime + SnowflakeEpoch
 }
