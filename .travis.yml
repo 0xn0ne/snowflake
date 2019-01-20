@@ -1,0 +1,15 @@
+language: go
+go:
+- 1.x
+- '1.8'
+- '1.9'
+- 1.10.x
+
+script:
+- go test -bench=.
+notifications:
+  email:
+    recipients:
+    - 437664071@qq.com
+    on_success: change
+    on_failure: always
