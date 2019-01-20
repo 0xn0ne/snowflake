@@ -12,7 +12,7 @@
                     time in milliseconds                    node id       sequence id
 ```
 
-为了减少计算上带来性能消耗，以及最后生成形式的各种不确定性，生成 snowflake ID 采用了直接赋值的操作形式。让我值得高兴的是，测了一下，1 毫秒内最大序列号 4095 随随便便跑满。
+为了减少计算上带来性能消耗，以及最后生成形式的各种不确定性，生成 snowflake ID 采用了直接赋值的操作形式。让我值得高兴的是，测了一下，在我辣鸡的 ubuntu 虚拟机中 1 毫秒内最大序列号 4095 随随便便跑满。
 
 ## 快速开始
 
@@ -24,7 +24,7 @@ go get -u github.com/0xNone/snowflake
 
 ### 用法
 
-```cgo
+```go
 package main
 
 import (
