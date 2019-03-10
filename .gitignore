@@ -13,3 +13,6 @@
 
 # Extra content
 .idea
+
+# Test file
+.cov
