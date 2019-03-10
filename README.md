@@ -1,6 +1,6 @@
 # snowflake
 
-[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake)[![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master)
+[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake) [![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master)
 
 一个使用 golang 编写并根据 Twitter snowflake id 的原理做了的 snowflake ID 生成工具
 
