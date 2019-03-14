@@ -1,6 +1,6 @@
 # snowflake
 
-[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake) [![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master)
+[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake) [![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/0xNone/snowflake)](https://goreportcard.com/report/github.com/0xNone/snowflake)
 
 一个使用 golang 编写并根据 Twitter snowflake id 的原理做了的 snowflake ID 生成工具
 
@@ -30,7 +30,7 @@ go get -u -v github.com/0xNone/snowflake
 
 支持修改的全局变量有 Epoch、SequenceBits、ArgsOrder、ArgsBits，极大满足高自定义
 
-！！！注意：Snowflake 的总 bits 数为 64，如果修改 SequenceBits、ArgsBits，占用比特过大，留给时间戳的空间就不够了，推荐预留 41 比特的长度给时间戳
+！！！注意：Snowflake 的总 bits 数为 64，如果修改 SequenceBits、ArgsBits，占用比特过大，留给时间戳的空间就不够了，推荐预留 40 比特的长度给时间戳，即如果 Epoch 设置为当前时间，该 snowflake 可以保持 34 年内没有冲突。
 
 ```go
 package main

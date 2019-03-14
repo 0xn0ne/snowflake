@@ -1,7 +1,6 @@
 package snowflake
 
 import (
-	"fmt"
 	"reflect"
 	"sync"
 	"testing"
@@ -96,7 +95,6 @@ func TestManagerByDefault_New(t *testing.T) {
 	}
 
 	for i := range sSnow {
-		fmt.Println(1001, sSnow[i])
 		if i == 1<<SequenceBits && sSnow[i].Sequence != 0 {
 			t.Errorf("ManagerByDefault.New() Next Time Seq = %v, want %v", sSnow[i].Sequence, 0)
 		} else if sSnow[i+1].Sequence-1 != sSnow[i].Sequence {
