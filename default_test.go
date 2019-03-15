@@ -78,7 +78,7 @@ func TestManagerByDefault_New(t *testing.T) {
 				LastUseTime: tt.fields.LastUseTime,
 				Sequence:    tt.fields.Sequence,
 			}
-			// 防干扰休眠
+			// Anti-interference sleep
 			time.Sleep(time.Millisecond)
 			tt.want = &IdByDefault{Args: tArgs, Overtime: time.Now().UnixNano()/1e6 - Epoch, Sequence: 0}
 			if got := m.New(tt.args.args); !reflect.DeepEqual(got, tt.want) {
@@ -88,7 +88,7 @@ func TestManagerByDefault_New(t *testing.T) {
 	}
 	m := &ManagerByDefault{}
 	sSnow := []*IdByDefault{}
-	// 防干扰休眠，goroutines 测试
+	// Anti-interference sleep, goroutines test
 	time.Sleep(time.Millisecond)
 	for i := 0; i < 1<<SequenceBits/1024+2; i++ {
 		go newSnowflakeId(sSnow, m)
@@ -249,7 +249,7 @@ func TestIdByDefault_CreateTime(t *testing.T) {
 				LastUseTime: tt.fields.LastUseTime,
 				Sequence:    tt.fields.Sequence,
 			}
-			// 防干扰休眠，goroutines 测试
+			// Anti-interference sleep, goroutines test
 			time.Sleep(time.Millisecond)
 			tt.want = time.Now().UnixNano() / 1e6
 			id := m.New(map[string]int64{})

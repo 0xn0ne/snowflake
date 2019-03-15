@@ -12,49 +12,57 @@ var (
 	SequenceMax int64 = -1 ^ (-1 << SequenceBits)
 )
 
-// ID 是 snowflake id 的原始接口
-// 以下函数表示可以使用的操作
+// ID is the raw interface of snowflake id.
+// The following functions represent actions that can be used.
 type ID interface {
-	// 转换为 int64 类型，并返回可能出现的错误
+	// convert id to int64 type
 	ToInt64() (int64, error)
 
-	// 转换为 []byte 类型，并返回可能出现的错误
+	// convert id to []byte type
 	ToBytes() ([]byte, error)
 
-	// 转换为 string 类型，并返回可能出现的错误
+	// convert id to string type
 	ToString() (string, error)
 
-	// 返回当前 snowflake 的创建时间
+	// Calculates id create time
 	CreateTime() int64
 }
 
-// Manager 是用于创建 snowflake id 的原始接口
-// 以下函数表示可以使用的操作，说实在我也不知道为什么不叫他生成器
+// Manager is the raw interface used to create snowflake id.
+// The following functions represent the operations that can be used.
+// To be honest, I don't know why I don't call it generators.
 type Manager interface {
-	// 新建 snowflake id
+	// Create a new snowflag id.
+	// Returns an ID.
 	New(map[string]int64) ID
 
-	// 新建 snowflake id，并转化为 int64
+	// Create a new snowflag id and convert it to int64 type.
+	// Returns int64 data that can be used to represent an ID.
 	NewToInt64(map[string]int64) (int64, error)
 
-	// 从 int64 中解析 snowflake id
+	// Parsing snowflake id from int64 type data.
+	// Returns the ID represented by the int64 data and possible errors.
 	ParseInt64(int64) (ID, error)
 
-	// 新建 snowflake id，并转化为 []byte
+	// Create a new snowflag id and convert it to []byte type.
+	// Returns []byte data that can be used to represent an ID.
 	NewBytes(map[string]int64) ([]byte, error)
 
-	// 从 []byte 中解析 snowflake id
+	// Parsing snowflake id from []byte type data.
+	// Returns the ID represented by the []byte data and possible errors.
 	ParseBytes([]byte) (ID, error)
 
-	// 新建 snowflake id，并转化为 string
+	// Create a new snowflag id and convert it to string type.
+	// Returns string data that can be used to represent an ID.
 	NewString(map[string]int64) (string, error)
 
-	// 从 string 中解析 snowflake id
+	// Parsing snowflake id from string type data.
+	// Returns the ID represented by the string data and possible errors.
 	ParseString(string) (ID, error)
 }
 
-// 新建一个 id 管理
-// snowflake id 主要依靠管理来生成
+// create a new default id manager
+// snowflagid is mainly generated/parsed by manager.
 func NewManager() (Manager, error) {
 	return NewDefaultManager()
 }

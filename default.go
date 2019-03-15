@@ -11,17 +11,26 @@ import (
 )
 
 var (
-	// 可手动调整的参数占用的比特数
+	// Order of ArgsBits
+	// If the keys of ArgsBits are not in ArgsOrder, these keys will not be used.
 	ArgsOrder      = []string{"unused", "machine"}
+
+	// Number of bits of snowflake id occupied by key.
+	// It is recommended to set aside 40 bits for Overtime.
+	// Please note that the default Sequence takes up 12 bits.
 	ArgsBits       = map[string]uint8{"unused": 1, "machine": 10}
+
+	// Offset of each Args, Automatically calculate when new manager is created.
 	ArgsOffsetBits = map[string]uint8{}
+
+	// Max of each Args, Automatically calculate when new manager is created.
 	ArgsMax        = map[string]int64{}
 )
 
-// 新建一个 id 管理
-// snowflake id 主要依靠管理来生成
+// new a ManagerByDefault
+// All the generation and analysis are operated by the manager.
 func NewDefaultManager() (Manager, error) {
-	// 初始化 OvertimeBits
+	// Initialize OvertimeBits
 	var i64 uint8 = 0
 	i64 += SequenceBits
 	for _, k := range ArgsOrder {
@@ -35,7 +44,7 @@ func NewDefaultManager() (Manager, error) {
 	}
 	OvertimeBits -= i64
 
-	// 初始化 OffsetBits、Max 相关内容
+	// Initialize OffsetBits, Max related content
 	offsetBits := SequenceBits + SequenceOffsetBits
 	OvertimeOffsetBits = offsetBits
 	offsetBits += OvertimeBits
@@ -49,29 +58,23 @@ func NewDefaultManager() (Manager, error) {
 	return &ManagerByDefault{}, nil
 }
 
-// id 管理的结构体
+// id manager
+// Mut dirty data lock.
+// LastUseTime records the last time the manager was used.
+// Sequence records the id serial number that was last generated using the manager.
 type ManagerByDefault struct {
 	Mut         sync.Mutex
 	LastUseTime int64
 	Sequence    int64
 }
 
-// snowflake id 的结构体
-type IdByDefault struct {
-	Args     map[string]int64
-	Overtime int64
-	Sequence int64
-}
-
-// 新建 snowflake id
-// args 为 snowflake id 中存储的内容
-// 如果 args 的 key 不存在则默认值为 0
-// !!! 事实上这部分是不安全的，因为为了性能原因，没有对最大值做检查。
-// 有一个方案是将 args 部分移动到 manager 处设置，或加数据库支持
+// Create a new snowflag id
+// Args is snowflake id Args
+// !!!In fact, this part is unsafe because the maximum value is not checked for performance reasons.
+// One solution is to move the args part to the manager.
 func (m *ManagerByDefault) New(args map[string]int64) ID {
 	m.Mut.Lock()
-
-	// 为了防止在同一秒内容出现重复的 ID 在这里强制休眠一下
+	// Forced sleep, in order to prevent duplicate ID in the same microsecond content
 	var now int64
 	for true {
 		now = time.Now().UnixNano() / 1e6
@@ -96,11 +99,12 @@ func (m *ManagerByDefault) New(args map[string]int64) ID {
 	return &IdByDefault{tArgs, m.LastUseTime - Epoch, m.Sequence}
 }
 
-// 新建 snowflake id，并转化为 int64
+// Create a new snowflag id and convert it to int64 type
 func (m *ManagerByDefault) NewToInt64(args map[string]int64) (int64, error) {
 	return m.New(args).ToInt64()
 }
 
+// Parsing snowflake id from int64 type data
 func (m *ManagerByDefault) ParseInt64(i64 int64) (ID, error) {
 	sequence := (i64 >> SequenceOffsetBits) & SequenceMax
 	overtime := (i64 >> OvertimeOffsetBits) & OvertimeMax
@@ -114,19 +118,23 @@ func (m *ManagerByDefault) ParseInt64(i64 int64) (ID, error) {
 		Args:     args}, nil
 }
 
+// Create a new snowflag id and convert it to []byte type
 func (m *ManagerByDefault) NewBytes(args map[string]int64) ([]byte, error) {
 	return m.New(args).ToBytes()
 }
 
+// Parsing snowflake id from []byte type data
 func (m *ManagerByDefault) ParseBytes(b []byte) (ID, error) {
 	i64 := int64(binary.BigEndian.Uint64(b))
 	return m.ParseInt64(i64)
 }
 
+// Create a new snowflag id and convert it to string type
 func (m *ManagerByDefault) NewString(args map[string]int64) (string, error) {
 	return m.New(args).ToString()
 }
 
+// Parsing snowflake id from string type data
 func (m *ManagerByDefault) ParseString(s string) (ID, error) {
 	i64, err := strconv.ParseInt(s, 16, 64)
 	if err != nil {
@@ -135,6 +143,17 @@ func (m *ManagerByDefault) ParseString(s string) (ID, error) {
 	return m.ParseInt64(i64)
 }
 
+// snowflake id
+// Args is the content stored in snowflake id. If the key of args does not exist, the default value is 0.
+// Overtime = now - Epoch (in ms)
+// Sequence is the serial number in the same microsecond.
+type IdByDefault struct {
+	Args     map[string]int64
+	Overtime int64
+	Sequence int64
+}
+
+// convert id to int64 type
 func (id *IdByDefault) ToInt64() (int64, error) {
 	var res int64 = (id.Overtime << OvertimeOffsetBits) | (id.Sequence << SequenceOffsetBits)
 	for _, k := range ArgsOrder {
@@ -143,6 +162,7 @@ func (id *IdByDefault) ToInt64() (int64, error) {
 	return res, nil
 }
 
+// convert id to []byte type
 func (id *IdByDefault) ToBytes() ([]byte, error) {
 	buff := new(bytes.Buffer)
 	iRes, _ := id.ToInt64()
@@ -153,11 +173,15 @@ func (id *IdByDefault) ToBytes() ([]byte, error) {
 	return buff.Bytes(), nil
 }
 
+// convert id to string type
 func (id *IdByDefault) ToString() (string, error) {
 	iRes, _ := id.ToInt64()
 	return fmt.Sprintf("%016s", strconv.FormatInt(iRes, 16)), nil
 }
 
+// Calculates id create time
+// Please do not modify Epoch at will, otherwise CreateTime will be confused.
 func (id *IdByDefault) CreateTime() int64 {
 	return id.Overtime + Epoch
 }
+
