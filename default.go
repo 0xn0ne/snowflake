@@ -11,23 +11,23 @@ import (
 )
 
 var (
-	// Order of ArgsBits
+	// ArgsOrder defines the order in which data is stored.
 	// If the keys of ArgsBits are not in ArgsOrder, these keys will not be used.
 	ArgsOrder      = []string{"unused", "machine"}
 
-	// Number of bits of snowflake id occupied by key.
+	// ArgsBits defines number of bits of snowflake id occupied by key.
 	// It is recommended to set aside 40 bits for Overtime.
 	// Please note that the default Sequence takes up 12 bits.
 	ArgsBits       = map[string]uint8{"unused": 1, "machine": 10}
 
-	// Offset of each Args, Automatically calculate when new manager is created.
+	// ArgsOffsetBits defines offset of each Args, Automatically calculate when new manager is created.
 	ArgsOffsetBits = map[string]uint8{}
 
-	// Max of each Args, Automatically calculate when new manager is created.
+	// ArgsMax defines max of each Args, Automatically calculate when new manager is created.
 	ArgsMax        = map[string]int64{}
 )
 
-// new a ManagerByDefault
+// ManagerByDefault returns a Manager object and an error caused by some abnormal data
 // All the generation and analysis are operated by the manager.
 func NewDefaultManager() (Manager, error) {
 	// Initialize OvertimeBits
@@ -35,7 +35,7 @@ func NewDefaultManager() (Manager, error) {
 	i64 += SequenceBits
 	for _, k := range ArgsOrder {
 		if _, ok := ArgsBits[k]; !ok {
-			return nil, errors.New(fmt.Sprintf("ArgsBits does not have this key \"%v\"", k))
+			return nil, fmt.Errorf("ArgsBits does not have this key \"%v\"", k)
 		}
 		i64 += ArgsBits[k]
 		if i64 > 64 || ArgsBits[k] > 64-SequenceBits {
