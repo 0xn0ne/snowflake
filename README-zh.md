@@ -2,7 +2,7 @@
 
 [ENGLISH](./README.md) | **简体中文**
 
-[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake) [![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/0xNone/snowflake)](https://goreportcard.com/report/github.com/0xNone/snowflake)
+[![Build Status](https://travis-ci.org/0xNone/snowflake.svg?branch=master)](https://travis-ci.org/0xNone/snowflake) [![Coverage Status](https://coveralls.io/repos/github/0xNone/snowflake/badge.svg?branch=master)](https://coveralls.io/github/0xNone/snowflake?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/0xn0ne/snowflake)](https://goreportcard.com/report/github.com/0xn0ne/snowflake)
 
 一个使用 golang 编写并根据 Twitter snowflake id 的原理做了的 snowflake ID 生成工具
 
@@ -23,7 +23,7 @@ unused                  time in milliseconds                   machine id      s
 ### 安装
 
 ```bash
-go get -u -v github.com/0xNone/snowflake
+go get -u -v github.com/0xn0ne/snowflake
 ```
 
 ### 用法
@@ -39,7 +39,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/0xNone/snowflake"
+	"github.com/0xn0ne/snowflake"
 	"log"
 )
 
@@ -91,7 +91,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/0xNone/snowflake"
+	"github.com/0xn0ne/snowflake"
 	"log"
 )
 
